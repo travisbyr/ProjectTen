@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,29 +8,34 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-app.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use https://firebase.google.com/docs/web/setup#available-libraries -->
+
+<script>
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyBVZtr4K4H7kkvTzI_MgXbHdNcWNOXiHYA",
+    authDomain: "todolist2-aece6.firebaseapp.com",
+    databaseURL: "https://todolist2-aece6.firebaseio.com",
+    projectId: "todolist2-aece6",
+    storageBucket: "todolist2-aece6.appspot.com",
+    messagingSenderId: "36713101759",
+    appId: "1:36713101759:web:736a6d5d94ec6de806c90a"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+</script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-auth.js"></script>
     <title>Document</title>
 </head>
+
 <body>
-    <script>
-        // Your web app's Firebase configuration
-        var firebaseConfig = {
-          apiKey: "AIzaSyBVZtr4K4H7kkvTzI_MgXbHdNcWNOXiHYA",
-          authDomain: "todolist2-aece6.firebaseapp.com",
-          databaseURL: "https://todolist2-aece6.firebaseio.com",
-          projectId: "todolist2-aece6",
-          storageBucket: "todolist2-aece6.appspot.com",
-          messagingSenderId: "36713101759",
-          appId: "1:36713101759:web:736a6d5d94ec6de806c90a"
-        };
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-      </script>
-
-
     <nav>
         <div class="nav-wrapper container">
             <a href="#" class="brand-logo right">Todo</a>
@@ -110,9 +116,9 @@
             var elems = document.querySelectorAll('.modal');
             var instances = M.Modal.init(elems);
         });
-         // Your web app's Firebase configuration
- 
-       // Initialize Firebase
+        // Your web app's Firebase configuration
+
+        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const auth = firebase.auth();
@@ -120,4 +126,5 @@
     <script src="auth.js"></script>
     <script src="index.js"></script>
 </body>
+
 </html>
