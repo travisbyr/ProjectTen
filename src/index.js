@@ -1,106 +1,100 @@
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="index.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+const todoList = document.querySelector('#todo-list');
+const form = document.querySelector('#add-todo-form');
+const updateBtn = document.querySelector('#update');
+const logoutItems = document.querySelectorAll('.logged-out');
+const loginItems = document.querySelectorAll('.logged-in');
+let currentUser = null;
+let newTitle = '';
+let updateId = null;
+// NOTE user display will update depends on the account and db 
+function setupUI(user) {
+    if (user) {
+        loginItems.forEach(item => item.style.display = 'block');
+        logoutItems.forEach(item => item.style.display = 'none');
+    } else {
+        loginItems.forEach(item => item.style.display = 'none');
+        logoutItems.forEach(item => item.style.display = 'block');
+    }
+}
+// REVIEW refactor code 
+//NOTE Simple rendering for the listed items on the page 
+function renderList(doc) {
+    let li = document.createElement('li');
+    li.className = "collection-item";
+    li.setAttribute('data-id', doc.id);
+  
+    let div = document.createElement('div');
+    let title = document.createElement('span');
+    title.textContent = doc.data().title;
+  
+    let anchor = document.createElement('a');
+    anchor.href = "#modal-edit";
+    anchor.className = "modal-trigger secondary-content";
+  
+    let editBtn = document.createElement('i');
+    editBtn.className = "material-icons";
+    editBtn.innerText = "edit";
+  
+  let deleteBtn = document.createElement('i');
+    deleteBtn.className = "material-icons secondary-content";
+    deleteBtn.innerText = "delete";
+    anchor.appendChild(editBtn);
+    div.appendChild(title);
+    div.appendChild(deleteBtn);
+    div.appendChild(anchor);
+    li.appendChild(div);
+  
+  // Event listeners for the delete icon
+    deleteBtn.addEventListener('click', e => {
+        let id = e.target.parentElement.parentElement.getAttribute('data-id'); // targeting the document data by it's id 
+        db.collection('alltodos').doc(currentUser.uid).collection('todos').doc(id).delete(); // calling the delete method by the database functions and removing from the db.
+    })
+  // Event listener for the edit icon
+    editBtn.addEventListener('click', e => {
+        updateId = e.target.parentElement.parentElement.parentElement.getAttribute('data-id');
+    })
+    todoList.append(li);
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.0.2/firebase-auth.js"></script>
-    <title>Document</title>
-</head>
-<body>
-    <nav>
-        <div class="nav-wrapper container">
-            <a href="#" class="brand-logo right">Todo</a>
-            <ul id="nav-mobile">
-                <li class="logged-in"><a href="#" id="logout">Logout</a></li>
-                <li class="logged-in" id="user-email"></li>
-                <li class="logged-out"><a href="#" class="modal-trigger" data-target="modal-login">Login</a></li>
-                <li class="logged-out"><a href="#" class="modal-trigger" data-target="modal-signup">Sign up</a></li>
-            </ul>
-        </div>
-    </nav>
-    <div class="container">
-        <form id="add-todo-form" class="logged-in">
-            <input type="text" name="title" placeholder="Add Task">
-            <button class="waves-effect waves-light btn">Add Task</button>
-        </form>
-        <ul id="todo-list" class="collection">
-            <!-- <li class="collection-item">
-                <div><span>Buying food</span>
-                    <i class="material-icons secondary-content">delete</i>
-                    <a href="#modal1" class="modal-trigger secondary-content"> <i class="material-icons ">edit</i></a>
-                </div>
-            </li> -->
-        </ul>
+}
 
-        <!-- EDIT MODAL -->
-        <div id="modal-edit" class="modal">
-            <div class="modal-content">
-                <input type="text" name="newtitle" placeholder="Update Task">
-            </div>
-            <div class="modal-footer">
-                <a href="#!" id="update" class="modal-close waves-effect waves-green btn-flat">Update</a>
-            </div>
-        </div>
-        <!-- LOGIN MODAL -->
-        <div id="modal-login" class="modal">
-            <div class="modal-content">
-                <h4>Login</h4>
-                <form action="" id="login-form">
-                    <div class="input-field">
-                        <input type="email" id="login-email" required>
-                        <label>Email address</label>
-                    </div>
-                    <div class="input-field">
-                        <input type="password" id="login-password" required>
-                        <label>Password</label>
-                    </div>
-                    <p class="error pink-text center-align"></p>
-                    <div class="modal-footer">
-                        <button class="waves-effect waves-green btn-flat">login</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-        <!-- SIGNUP MODAL -->
-        <div id="modal-signup" class="modal">
-            <div class="modal-content">
-                <h4>Sign up</h4>
-                <form action="" id="signup-form">
-                    <div class="input-field">
-                        <input type="email" id="signup-email" required>
-                        <label>Email address</label>
-                    </div>
-                    <div class="input-field">
-                        <input type="password" id="signup-password" required>
-                        <label>Password</label>
-                    </div>
-                    <p class="error pink-text center-align"></p>
-                    <div class="modal-footer">
-                        <button class="waves-effect waves-green btn-flat">signup</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var elems = document.querySelectorAll('.modal');
-            var instances = M.Modal.init(elems);
+updateBtn.addEventListener('click', e => {
+    newTitle = document.getElementsByName('newtitle')[0].value;
+    db.collection('alltodos').doc(currentUser.uid).collection('todos').doc(updateId).update({
+        title: newTitle
+    })
+})
+// Event listener for the form input 
+form.addEventListener('submit', e => {
+    e.preventDefault();
+    db.collection('alltodos').doc(currentUser.uid).collection('todos').add({ // Storing the input data to firebase with uid value 
+        title: form.title.value
+    })
+    form.title.value = ''; // Clearing the form after submitting 
+})
+
+// Fetching db for the auth user and listening to changes on that account 
+function getTodos() {
+    todoList.innerHTML = '';
+    currentUser = auth.currentUser;
+    document.querySelector('#user-email').innerHTML = (currentUser != null ? currentUser.email : '');
+    console.log('currentUser', currentUser)
+    if (currentUser === null) {
+        todoList.innerHTML = '<h3 class="center-align">Please login to get todos</h3>';
+        return;
+    }
+    db.collection('alltodos').doc(currentUser.uid).collection('todos').orderBy('title').onSnapshot(snapshot => {
+        let changes = snapshot.docChanges()
+        changes.forEach(change => {
+            if (change.type == 'added') {
+                renderList(change.doc); // e-render the node on the DOM 
+            } else if (change.type == 'removed') {
+                let li = todoList.querySelector(`[data-id=${change.doc.id}]`);
+                todoList.removeChild(li); // removing the node from the DOM 
+            } else if (change.type == 'modified') {
+                let li = todoList.querySelector(`[data-id=${change.doc.id}]`);
+                li.getElementsByTagName('span')[0].textContent = newTitle;
+                newTitle = '';
+            }
         });
-         // Your web app's Firebase configuration
- 
-       // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        const auth = firebase.auth();
-    </script>
-    <script src="auth.js"></script>
-    <script src="index.js"></script>
-</body>
-</html>
+    })
+}

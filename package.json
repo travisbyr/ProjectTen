@@ -1,0 +1,20 @@
+{
+  "name": "ProjectTen",
+  "version": "1.0.0",
+  "description": "Firebase project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/travisbyr/ProjectTen.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/travisbyr/ProjectTen/issues"
+  },
+  "homepage": "https://github.com/travisbyr/ProjectTen#readme"
+}
